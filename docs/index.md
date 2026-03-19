@@ -4,20 +4,23 @@ layout: home
 hero:
   name: Engram
   text: Immune System for AI Agents
-  tagline: External monitoring infrastructure that detects what the agent cannot see
+  tagline: Cross-session memory with metabolic lifecycle, real-time behavior monitoring, and predictive knowledge supply
   actions:
     - theme: brand
       text: Read the Docs
       link: /engram/overview
 
 features:
-  - title: Shadow Index
-    details: Pre-neuron monitor that detects when agents work with stale files while newer alternatives exist outside their search results.
-    link: /engram/shadow-index
-  - title: Receptor Architecture
-    details: Passive sensory layer that observes agent behavior without interfering — heatmaps, emotion vectors, and firing signals.
+  - title: Metabolic Knowledge
+    details: Knowledge that is used survives. Knowledge that isn't, dies. Two-state lifecycle (recent → fixed), dedup on ingest, automatic expiry. No accumulation bloat.
+    link: /engram/overview
+  - title: Receptor & Emotion Engine
+    details: Passive sensory layer observing agent behavior via tool call hooks. 5-axis emotion vector, three-layer neuron model, adaptive thresholds — zero LLM cost.
     link: /engram/receptor-architecture
-  - title: Predictive Inference
-    details: Future Probe validates action consequences before they happen. Shadow Index validates action premises after the fact.
+  - title: Shadow Index
+    details: Pre-neuron monitor detecting stale file access that the neuron system structurally cannot see. 6-axis heatmap with 3-stage scope expansion.
+    link: /engram/shadow-index
+  - title: Future Probe
+    details: Predictive knowledge supply — searches near the agent's behavioral position before it knows it needs help. Temporal safety net with Shadow Index.
     link: /engram/predictive-inference
 ---
