@@ -31,8 +31,13 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/' }
+      { icon: 'github', link: 'https://github.com/hiatamaworkshop/engram' }
     ],
+
+    footer: {
+      message: 'Designed by Hiatama Workshop · <a href="mailto:hiatamaworkshop@gmail.com">hiatamaworkshop@gmail.com</a>',
+      copyright: '<a href="https://github.com/hiatamaworkshop/engram">Source Repository</a>'
+    },
 
     search: {
       provider: 'local'
