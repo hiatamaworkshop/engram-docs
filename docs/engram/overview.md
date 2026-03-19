@@ -53,6 +53,8 @@ Engram takes the opposite approach: **forgetting is the feature**. Nodes have a 
 
 ### Node Lifecycle
 
+Two states. No intermediate. Knowledge either proves its value or expires.
+
 ```
 engram_push → [recent, weight:0, TTL:6h]
                     │
@@ -63,14 +65,31 @@ engram_push → [recent, weight:0, TTL:6h]
         ▼           ▼           ▼
    [promoted]    [expired]   [demoted]
    → fixed       deleted     → recent
-   (permanent)
 ```
 
-- **Promotion**: weight ≥ 3 AND hitCount ≥ 5 → `fixed` (permanent)
-- **Expiry**: TTL ≤ 0 AND weight ≤ 0 → deleted
-- **Demotion**: `fixed` + negative flag → back to `recent`
+The Digestor runs every 10 minutes: decay weights, tick TTL, promote, expire. Inactive projects hibernate (TTL frozen — knowledge doesn't rot while you're away).
 
-The Digestor runs every 10 minutes: decay weights, tick TTL, promote, expire. Fixed nodes are untouched. Inactive projects hibernate (TTL frozen — knowledge doesn't rot while you're away).
+Even `fixed` nodes aren't truly permanent. They decay with a 60-day half-life. If a fixed node goes ~100 days without a single recall hit, it's automatically demoted back to `recent` and re-enters the TTL cycle. No manual cleanup needed — **the metabolism handles it**.
+
+### Density-Based Dynamic Metabolism
+
+Fixed decay rates fail. A 6-hour TTL is too long for a quick session, too short for a month-long project. The solution comes from Sphere's original Digestor: **let the data density determine the pressure**.
+
+```
+density = nodeCount / timeSpan(hours)
+
+Low density  (< 1 node/h)  → decay ×0.5  (protect scarce knowledge)
+Normal       (~3 nodes/h)  → decay ×1.0  (baseline)
+High density (> 10 nodes/h) → decay ×3.0  (cull the flood)
+```
+
+No configuration needed. The system reads the density from existing node timestamps during each batch — no extra queries, no tracking files.
+
+This naturally handles every project shape:
+- **Short sprint**: few nodes / short span → moderate pressure
+- **Long project, early**: few nodes / long span → nearly zero pressure
+- **Long project, mature**: many nodes / long span → moderate pressure
+- **Information explosion**: many nodes / short span → aggressive culling
 
 ### Sanitize Layer
 
@@ -81,18 +100,11 @@ On ingestion, a multi-phase pipeline runs without any LLM call:
 3. **Dedup** — Cosine similarity against existing nodes. >0.92 → merge (inherit hitCount, update summary)
 4. **Normalize** — Lowercase tags, unify hyphenation
 
-The agent's Claude model does the thinking (splitting knowledge into seeds, choosing tags). The gateway does mechanical validation. Clean separation.
+### Philosophy
 
-### Two States, Not Three
+**What dies, dies. What should remain, is kept by will.**
 
-Previous designs had `fresh / amber / fossil`. Engram v2 simplifies to two states:
-
-| State | Meaning | TTL |
-|---|---|---|
-| `recent` | Newly ingested, on probation | Yes (expires) |
-| `fixed` | Earned permanence through use | No (permanent) |
-
-There is no intermediate state. Either knowledge proves its value through recall hits, or it expires. This is metabolic selection — the same principle that governs biological fitness.
+No probabilistic survival. No compression archives. Nodes either earn their place through use, or they expire. If something valuable is lost, re-push it — with fresher context. Engram covers short-to-medium term. Long-term persistence is the job of other layers (Persona distillation, Sphere collective knowledge).
 
 ## The Problem No One Else Is Solving
 
@@ -159,13 +171,19 @@ Where Shadow Index validates *premises* (are you looking at the right files?), F
 
 → [Predictive Inference](./predictive-inference)
 
-### Behavioral Prior — Body Memory
+### Persona System — Perceptual Lens
 
-Information continuity (what you know) comes from engram's knowledge store. *Behavioral* continuity (how you move) comes from the Behavioral Prior — adapted thresholds, pattern distributions, emotion baselines saved across sessions.
+Engram stores *what you know*. The Persona system stores *how you perceive* — receptor thresholds, emotion baselines, and sensitivity calibrations distilled from successful sessions.
 
-The Persona system extends this to species-level collective experience via the Sphere network. Successful sessions export a statistical fingerprint. Other agents may encounter these personas through Future Probe projections — probabilistic, not guaranteed.
+A Persona is not a prompt, not fine-tuning, not RAG. It swaps the receptor's perceptual lens: which signals feel urgent, which feel normal. Lightweight, reversible, swappable on task transition.
 
-If engram is declarative memory (hippocampus), behavioral prior is procedural memory (cerebellum), and persona is inherited instinct (genetics).
+| Layer | What it provides | Biological analogy |
+|---|---|---|
+| Engram (knowledge) | What you know | Declarative memory (hippocampus) |
+| Behavioral Prior | How you move | Procedural memory (cerebellum) |
+| Persona (Sphere) | How the species moves | Inherited instinct (genetics) |
+
+→ [Persona System](./persona)
 
 ## Why the Industry Won't Build This
 

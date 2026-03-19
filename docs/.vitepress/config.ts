@@ -25,6 +25,7 @@ export default defineConfig({
             { text: 'Receptor Architecture', link: '/engram/receptor-architecture' },
             { text: 'Shadow Index', link: '/engram/shadow-index' },
             { text: 'Predictive Inference', link: '/engram/predictive-inference' },
+            { text: 'Persona System', link: '/engram/persona' },
           ]
         }
       ]

@@ -253,22 +253,10 @@ score × (1 + δ[axis])
 
 **Principle**: The sensor (B neuron) stays pure. Calibration adjusts the *interpretation* of readings, not the instrument itself. Same principle as Sphere's `effective = base × (1 + δ)`.
 
-## Behavioral Prior — Body Memory Across Sessions
+## Persona System — Perceptual Continuity
 
-Engram provides knowledge continuity. Behavioral Prior provides *behavioral* continuity:
+The receptor starts from zero each session. The Persona system fixes this by distilling successful sessions into a **perceptual lens** — emotion baselines, field adjustments, sensitivity calibrations — and restoring it at session start.
 
-| Layer | Scope | Data |
-|---|---|---|
-| **Local** (receptor-prior.json) | Individual | Adapted thresholds, pattern distributions, emotion baselines |
-| **Sphere** (Persona) | Species-level | Statistical behavioral fingerprint — anonymized, probabilistic encounter |
+Personas are not prompts or fine-tuning. They swap the receptor's initial conditions: which signals feel normal, which feel urgent. The ambient EMA naturally overwrites these seeds as new events arrive.
 
-The local prior seeds the ambient estimator at session start. Not as commands, but as initial conditions — new events naturally overwrite via EMA.
-
-The Persona system pushes anonymized behavioral statistics (emotion profiles, pattern distributions, adapted thresholds) to the Sphere network. Other agents *may* encounter these through future_probe projections. Encounter is probabilistic, not guaranteed — like finding a power-up item. Cosine similarity of action signatures determines blend strength.
-
-**Three layers of continuity**:
-- Individual experience → extrapolation (trajectory extension)
-- Species knowledge (Sphere centroid) → prediction (unexperienced trajectories)
-- Species behavior (Persona/behavioral prior) → adaptation (unreached sensitivities)
-
-Together, a new agent starts not from zero but from the species' informational and behavioral mean. Knowing fire is hot without having been burned.
+→ [Persona System](/engram/persona) for the full design.
