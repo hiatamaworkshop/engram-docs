@@ -104,6 +104,18 @@ In DCP, the position of a value within an array determines its semantics. This i
 
 The schema travels with the data. There's no separate documentation to fall out of sync, no version negotiation, no "which schema does this payload use?" question. Read the header, parse the data. One step.
 
+### Normalize values
+
+LLM tokenizers treat numbers differently by form. `0.36` costs 2 tokens; `92` costs 1. Precision the consumer doesn't need is wasted tokens.
+
+DCP recommends normalizing values to the simplest representation that preserves meaning:
+
+- Emotion axes at 0.01 precision? Consider integers 0-100 instead of floats 0.00-1.00
+- Timestamps in milliseconds? If second granularity suffices, divide first
+- Boolean-like values? `0`/`1` over `true`/`false` (fewer tokens)
+
+Match data resolution to the consumer's actual needs — the same principle as choosing `int16` over `float64` in binary protocols, applied to token cost.
+
 ## Where DCP Lives in Engram
 
 DCP isn't a standalone library. It's a design principle applied throughout the system:

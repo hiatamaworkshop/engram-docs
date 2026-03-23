@@ -26,6 +26,7 @@ export default defineConfig({
             { text: 'Shadow Index', link: '/engram/shadow-index' },
             { text: 'Predictive Inference', link: '/engram/predictive-inference' },
             { text: 'Persona System', link: '/engram/persona' },
+            { text: 'Data Cost Protocol', link: '/engram/data-cost-protocol' },
           ]
         }
       ]

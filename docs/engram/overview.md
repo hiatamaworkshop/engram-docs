@@ -1,5 +1,7 @@
 # Engram — Immune System for AI Agents
 
+<small>Designed by Hiatama Workshop · hiatamaworkshop@gmail.com</small>
+
 ## What Engram Is
 
 Engram is cross-session memory and behavioral intelligence for AI agents. It provides three things no other system offers together:
