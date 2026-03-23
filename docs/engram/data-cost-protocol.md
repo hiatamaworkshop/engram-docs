@@ -116,6 +116,34 @@ DCP recommends normalizing values to the simplest representation that preserves 
 
 Match data resolution to the consumer's actual needs — the same principle as choosing `int16` over `float64` in binary protocols, applied to token cost.
 
+## Fixed-Length Principle
+
+DCP arrays are fixed-length by design. Every record in a schema has the same number of fields, in the same order. This is what makes positional parsing, overlay, and cross-domain comparison work — index 4 always means the same thing.
+
+### Why fixed-length matters
+
+- **Parse cost**: no key lookup, no field-count validation. Read position N, done.
+- **Overlay**: stack arrays from different domains and compare by index. If lengths vary, alignment breaks.
+- **Schema as contract**: the schema line declares the structure once. Every record honors it. No surprises.
+
+### Last-field escape hatch
+
+The final field of any record type may carry an optional, free-form structure:
+
+```
+[schema: A=arc(t,gapMs,state,intensity,frust,seek,conf,fatigue,flow,ext?)]
+["A",1200,0,"stuck",0.42,0.35,0.12,0.08,0.60,{"note":"retry after timeout","ctx":[1,2]}]
+["A",1400,200,"exploring",0.28,0.40,0.18,0.06,0.65]
+```
+
+Rules:
+- Only the **last** field. Interior fields stay positional and typed.
+- **Optional** — omitting it is normal, not exceptional.
+- The preceding fields remain fixed-length. Index stability is preserved.
+- What goes in the last field is unconstrained — object, array, string, null.
+
+This is the escape hatch, not the norm. A well-designed schema rarely needs it. But DCP itself is a voluntary convention with no enforcement mechanism — it cannot forbid what it cannot police. Acknowledging this formally keeps schemas honest: if a domain needs extensibility, it flows through a defined channel rather than corrupting the positional structure.
+
 ## Where DCP Lives in Engram
 
 DCP isn't a standalone library. It's a design principle applied throughout the system:
