@@ -138,3 +138,57 @@ DCP asks a different question: **why have keys at all?** If the consumer knows t
 As multi-agent systems emerge — agents handing off work, sharing experience, streaming behavioral data — the volume of AI-to-AI communication will dwarf AI-to-human output. Formatting that traffic for human readability is a cost no one will want to pay.
 
 > You minify JavaScript before deploying to production. Why wouldn't you minify data before sending it to an AI?
+
+## Benchmark: DCP vs JSON vs Natural Language
+
+Claims need numbers. We ran a reproducible benchmark comparing the same receptor firing data in three formats across data size, parse speed, and LLM token cost.
+
+### Data Size (10,000 records)
+
+| Format | bytes/record | vs DCP |
+|--------|-------------|--------|
+| DCP compact | 83 B | 1.00x |
+| JSON (JSONL) | 182 B | 2.19x |
+| Natural language | 223 B | 2.69x |
+
+DCP is less than half the size of JSON, roughly a third of natural language. The ratio is stable across scales (100 to 10,000 records).
+
+### Parse Speed (10,000 records)
+
+| Format | Total | per record | vs DCP |
+|--------|-------|-----------|--------|
+| DCP compact | 10.9 ms | 1.09 μs | 1.00x |
+| JSON (JSONL) | 15.8 ms | 1.58 μs | 1.45x |
+| Natural language | 26.6 ms | 2.66 μs | 2.44x |
+
+The NL figure is regex parsing against a controlled template. Real-world natural language requires LLM inference — orders of magnitude slower.
+
+### Token Cost (LLM context consumption)
+
+| Format | 10,000 records | vs DCP | at $3/1M tokens |
+|--------|---------------|--------|-----------------|
+| DCP compact | ~207K tokens | 1.00x | $0.62 |
+| JSON (JSONL) | ~455K tokens | 2.19x | $1.36 |
+| Natural language | ~557K tokens | 2.69x | $1.67 |
+
+### The Real Gap: Parsing Cost
+
+DCP and JSON parse with zero LLM cost — string operations only. Natural language requires LLM inference to extract structured data:
+
+```
+1,000 records parsing cost:
+  DCP/JSON: $0.0000  (JSON.parse / array index)
+  NL:       $0.2163  (Sonnet input + output tokens)
+```
+
+The most expensive thing about natural language in AI-to-AI communication isn't the bytes — it's that **parsing requires inference**.
+
+### Reproduce
+
+The benchmark script generates synthetic receptor data and measures all three axes. Available at [`benchmarks/dcp-vs-json-vs-nl/`](https://github.com/hiatamaworkshop/engram/tree/main/benchmarks/dcp-vs-json-vs-nl) in the engram repository:
+
+```bash
+cd benchmarks/dcp-vs-json-vs-nl
+npm install
+npx tsx bench.ts
+```

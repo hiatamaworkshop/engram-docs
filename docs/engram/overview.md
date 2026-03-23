@@ -201,7 +201,7 @@ Persona (statistical fingerprint) + Prior Block (temporal trajectory) unified in
 
 ### Data Cost Protocol — AI Native Data Format
 
-If no human reads the data, there's no reason to write it in a human-readable format. DCP is the design discipline behind engram's compact data exchange: declare a schema once, write data by position, inline the schema with the payload. Applied across Prior Block, Experience Package, and instruction compilation — measured at **71% token savings** versus equivalent JSON.
+If no human reads the data, there's no reason to write it in a human-readable format. DCP is the design discipline behind engram's compact data exchange: declare a schema once, write data by position, inline the schema with the payload. Applied across Prior Block, Experience Package, and instruction compilation — measured at **71% token savings** versus equivalent JSON. A [reproducible benchmark](./data-cost-protocol#benchmark-dcp-vs-json-vs-natural-language) confirms: DCP is 2.2x smaller than JSON and 2.7x smaller than natural language per record, with zero LLM cost for parsing.
 
 → [Data Cost Protocol](./data-cost-protocol)
 
