@@ -177,13 +177,25 @@ Engram stores *what you know*. The Persona system stores *how you perceive* — 
 
 A Persona is not a prompt, not fine-tuning, not RAG. It swaps the receptor's perceptual lens: which signals feel urgent, which feel normal. Lightweight, reversible, swappable on task transition.
 
+### Prior Block — Session Experience Transfer
+
+Prior Block carries a session's temporal experience as structured data — the time-series of emotional trajectory, state transitions, and knowledge references. Delivered once at session start via `engram_watch`, it gives the agent episodic context without inference cost.
+
+Three-part structure: Header (purpose) → Arc (journey) → Footer (outcome). Compact JSON arrays, not natural language — ~150 tokens for a 10-point session. Footer includes hot file paths and method ranking from the receptor's PathHeatmap and Commander.
+
+### Experience Package — Individual Continuity Unit (Planned)
+
+Persona (statistical fingerprint) + Prior Block (temporal trajectory) unified into a single Sphere Node. The complete record needed to reconstruct an AI individual's working state. Flows through Sphere's metabolism and is served via Facade's showcase for cross-agent transfer.
+
 | Layer | What it provides | Biological analogy |
 |---|---|---|
 | Engram (knowledge) | What you know | Declarative memory (hippocampus) |
-| Behavioral Prior | How you move | Procedural memory (cerebellum) |
-| Persona (Sphere) | How the species moves | Inherited instinct (genetics) |
+| Prior Block | What you experienced | Episodic memory (hippocampus) |
+| Persona | How you perceive | Perceptual calibration (sensory cortex) |
+| Experience Package | The complete individual | Body + memory (organism) |
+| Persona via Sphere | How the species perceives | Inherited instinct (genetics) |
 
-→ [Persona System](./persona)
+→ [Persona & Experience Package](./persona)
 
 ## Why the Industry Won't Build This
 
