@@ -1,8 +1,10 @@
-# Engram — Immune System for AI Agents
+# Engram
 
-External monitoring infrastructure that detects what the agent cannot see.
+Cross-session memory and behavioral intelligence for AI agents. Knowledge that is used survives. Knowledge that isn't, dies.
 
-As AI agents become more capable, they decide faster — and become more vulnerable to information outside their search results. Engram provides a passive sensory layer that watches agent behavior and surfaces staleness signals, knowledge gaps, and blind spots without consuming LLM inference.
+Persistent memory with metabolic lifecycle, real-time behavior monitoring, and predictive knowledge supply. Zero LLM inference in the infrastructure path.
+
+> Source: [github.com/hiatamaworkshop/engram](https://github.com/hiatamaworkshop/engram)
 
 ## Documentation
 
@@ -15,11 +17,11 @@ As AI agents become more capable, they decide faster — and become more vulnera
 
 ## Key Ideas
 
-- **No LLM in the monitoring path** — File metadata, decay functions, threshold comparisons only
-- **Three-layer neuron model** (A/B/C) derived from bio-inspired audio processing
-- **Shadow Index** detects stale file access that the neuron system structurally cannot see
-- **Field coupling** — Layers modulate each other through shared state, not commands
-- **Time decay as the sole weight mechanism** — No arbitrary coefficients
+- **Metabolic memory** — Nodes gain weight through use, decay through neglect, die when irrelevant
+- **Receptor** — Three-layer neuron model (A/B/C) observes agent behavior, tracks 5-axis emotion vector, predicts knowledge needs. All pure math, no LLM inference
+- **Data Cost Protocol (DCP)** — Compact positional arrays for AI-to-AI communication. Schema registry with hash-based handshake. No natural language overhead
+- **Persona / Prior Block** — Session experience distilled into reusable calibration data. No cold start
+- **Sphere federation** — Metabolically filtered knowledge feeds into collective intelligence
 
 ## Local Development
 
