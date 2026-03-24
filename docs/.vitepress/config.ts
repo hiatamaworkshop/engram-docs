@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Engram',
-  description: 'Immune system for AI agents — architecture docs',
+  description: 'Cross-session memory and behavioral intelligence for AI agents',
   lang: 'en-US',
   cleanUrls: true,
 
