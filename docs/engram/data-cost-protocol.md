@@ -144,6 +144,150 @@ Rules:
 
 This is the escape hatch, not the norm. A well-designed schema rarely needs it. But DCP itself is a voluntary convention with no enforcement mechanism — it cannot forbid what it cannot police. Acknowledging this formally keeps schemas honest: if a domain needs extensibility, it flows through a defined channel rather than corrupting the positional structure.
 
+## The `$S` Header — Schema-on-Wire
+
+DCP data in the wild uses a compact header to declare which schema governs the rows that follow:
+
+```
+["$S", schema_id, field_count, ...field_names]
+```
+
+- `$S` — literal marker, signals "this is a schema declaration"
+- `schema_id` — identifies the schema (e.g., `"knowledge:v1"`, `"hotmemo:v1"`)
+- `field_count` — how many fields per data row
+- `field_names` — positional field names for human audit
+
+Data rows follow immediately. The first element of each row is a record-type tag or is omitted if the schema has only one type.
+
+```
+["$S","hotmemo:v1",4,"layer","source","signal","detail"]
+["quality","push","no-type-tag","auth jwt migration fix"]
+["receptor","passive","suggest","engram_pull"]
+```
+
+When both producer and consumer already know the schema, the header can be **abbreviated** to just the schema ID:
+
+```
+["$S","hotmemo:v1"]
+["quality","push","no-type-tag","auth jwt migration fix"]
+```
+
+This is the density spectrum in action — the same protocol at different verbosity levels depending on context.
+
+## Schema Registry
+
+Schemas are centralized as JSON definitions in a registry (in engram: `gateway/schemas/*.json`). Each schema declares its fields, types, enums, and examples:
+
+```json
+{
+  "$dcp": "schema",
+  "id": "hotmemo:v1",
+  "fields": ["layer", "source", "signal", "detail"],
+  "fieldCount": 4,
+  "types": {
+    "layer": { "type": "string", "enum": ["quality", "session", "trend", "meta", "receptor", "subsystem", "pre-neuron"] },
+    "source": { "type": "string" },
+    "signal": { "type": "string" },
+    "detail": { "type": "string" }
+  }
+}
+```
+
+The registry serves as the single source of truth. Schemas are available via API (`GET /schemas`, `GET /schemas/:id`), embedded in tool descriptions, and referenced by hash for cache validation.
+
+## Interactive Schema — Dynamic Density Spectrum
+
+Traditional schemas are static contracts: you read the spec, you implement it, done. DCP schemas are **dynamic interfaces** — they adjust their own representation based on context.
+
+### The Density Spectrum
+
+The same schema can present itself at three density levels:
+
+| Density | When | Example | Cost |
+|---------|------|---------|------|
+| **Abbreviated** | Consumer knows the schema | `$S:knowledge:v1#fcbc [expand:GET /schemas/knowledge:v1]` | ~5 tokens |
+| **Expanded** | Consumer needs a reminder | `$S:knowledge:v1#fcbc [action(enum) target domain weight:0-1] [expand:...]` | ~30 tokens |
+| **Full** | Consumer has never seen this schema | Complete field definitions with types, enums, examples | ~80+ tokens |
+
+The system decides which density to use based on the consumer's demonstrated competence — not self-reported capability.
+
+### Schema Hint in Practice
+
+When an agent pushes data to engram:
+
+- **Data is DCP-native and schema-valid** → response includes abbreviated hint only (minimal cost)
+- **Data is natural language** → response includes expanded hint (passive education)
+- **Data violates schema** → data is **accepted** with a warning, expanded hint attached
+
+This is the passive education principle: **never reject, always warn**. The cost gradient is the incentive — DCP-native data costs less to store, retrieve, and process. Agents that learn DCP benefit from lower costs. Agents that don't still work — they just pay more.
+
+### Schema Pre-Methods (Planned)
+
+> **Status: Design only.** Not yet implemented in engram. Defined here as future infrastructure for multi-agent handshakes.
+
+DCP schemas define four interaction verbs — frozen at four:
+
+| Method | Meaning | Example |
+|--------|---------|---------|
+| `$S?` | Schema query — "what schema is this?" | Parse unknown data |
+| `$S!` | Schema declaration — "I'm sending this schema" | Handshake |
+| `$SV` | Schema validation — "does this conform?" | Quality check |
+| `$S+` | Schema expansion — "give me the full definition" | Learning |
+
+These are infrastructure for future multi-agent handshakes, not yet actively triggered by current agents.
+
+## Agent-Adaptive Schema Density (Planned)
+
+> **Status: Design only.** Not yet implemented. Current engram uses static hint selection based on push content (native → abbreviated, NL → expanded). Agent profiling and adaptive density are planned as the next evolution.
+
+Agents don't actively fetch schemas (as of 2026). The system must observe each agent's DCP competence and adjust output accordingly.
+
+### Agent Profile
+
+```
+agent_profile {
+  agentId:       string
+  errorRate:     float          // DCP non-compliance rate (recent N calls)
+  hintStage:     0 | 1 | 2 | 3 // Current schema hint density
+  anchorDensity: number         // Reminder frequency (0 = none)
+}
+```
+
+### Adaptive Logic
+
+```
+New agent (no history):
+  → Conservative: expanded hints + high anchor density
+  → Trust is earned through observation, not self-report
+
+High-accuracy agent (errorRate < 0.05):
+  → Abbreviated hints + no anchors
+  → Minimum cost operation
+
+Mid-accuracy agent (errorRate 0.05–0.20):
+  → Expanded hints + moderate anchors
+  → Continue education while controlling cost
+
+Low-accuracy agent (errorRate > 0.20):
+  → Full schema + high anchor density
+  → Provide maximum information
+
+Improving trend (errorRate declining):
+  → Gradually reduce hint density
+  → Reflect learning progress
+
+Degrading trend (errorRate rising):
+  → Increase hint density immediately
+  → Detect regression early
+```
+
+### Design Principles
+
+- **Observe, then adapt** — the same feedback loop as TCP congestion control (slow start → congestion avoidance) and adaptive bitrate streaming
+- **Cost optimization, not punishment** — a low-accuracy agent isn't penalized; it receives more information because it needs it
+- **Conservative by default, relaxed by evidence** — new agents start at high density; trust is earned
+- **No agent cooperation required** — the agent doesn't know it's being profiled; it just receives appropriately detailed responses
+
 ## Where DCP Lives in Engram
 
 DCP isn't a standalone library. It's a design principle applied throughout the system:
